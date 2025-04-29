@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Registration - Journal</title>
+    <title>Student Dashboard - Journal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -17,13 +17,17 @@
             font-size: 60px;
             margin-bottom: 20px;
         }
+        h2 {
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
         .formContainer {
             background: #ffffff;
             color: #764ba2;
-            padding: 40px 30px;
+            padding: 30px;
             border-radius: 10px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
         }
@@ -32,10 +36,10 @@
             display: block;
             margin: 10px 0;
         }
-        .formContainer input {
+        .formContainer textarea {
             width: 100%;
             padding: 12px;
-            margin: 10px 0;
+            margin-bottom: 20px;
             border-radius: 5px;
             border: 1px solid #764ba2;
             font-size: 16px;
@@ -53,47 +57,32 @@
         .formContainer button:hover {
             background: #5b3c88;
         }
-        .formContainer .back-link {
-            margin-top: 20px;
-            font-size: 16px;
-        }
-        .formContainer .back-link a {
-            text-decoration: none;
-            color: #764ba2;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        .formContainer .back-link a:hover {
-            color: #5b3c88;
-        }
     </style>
 </head>
 <body>
 
-    <h1>Students Register Here</h1>
+    <h1>Welcome to the Student Dashboard</h1>
 
     <div class="formContainer">
-        <form method="POST" action="{{ route('register') }}">
+        <h2>Weekly Reflection</h2>
+
+        <form method="POST" action="{{ route('reflection.submit') }}">
             @csrf
 
-            <label for="name">Name</label>
-            <input type="text" name="name" id="name" required>
+            <label for="experience">Concrete Experience (What happened?)</label>
+            <textarea name="experience" id="experience" rows="4" required></textarea>
 
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" required>
+            <label for="observation">Reflective Observation (What did you notice?)</label>
+            <textarea name="observation" id="observation" rows="4" required></textarea>
 
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" required>
+            <label for="conceptualisation">Abstract Conceptualisation (What did you learn?)</label>
+            <textarea name="conceptualisation" id="conceptualisation" rows="4" required></textarea>
 
-            <label for="password_confirmation">Confirm Password</label>
-            <input type="password" name="password_confirmation" id="password_confirmation" required>
+            <label for="experimentation">Active Experimentation (What will you try next?)</label>
+            <textarea name="experimentation" id="experimentation" rows="4" required></textarea>
 
-            <button type="submit">Register</button>
+            <button type="submit">Submit Reflection</button>
         </form>
-
-        <div class="back-link">
-            <a href="{{ route('home') }}">Home Page</a>
-        </div>
     </div>
 
 </body>

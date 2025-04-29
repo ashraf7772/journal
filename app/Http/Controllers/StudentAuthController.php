@@ -3,44 +3,69 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User; // If students are stored in the 'users' table
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Validation\ValidationException;
+
 class StudentAuthController extends Controller
 {
-    
+    public function showRegisterForm()
+    {
+        return view('studentRegister');
+    }
+
     public function register(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6'
-        ]);
+{
+    $details = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8',
+    ]);
 
-        // Create new student
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password), // Hash password
-        ]);
+    $user = User::create([
+        'name' => $details['name'],
+        'email' => $details['email'],
+        'password' => bcrypt($details['password']),
+        'role' => 'student',
+    ]);
 
-        return redirect()->route('student.login')->with('success', 'Registration was successful. You can now log in.');
-    }
+    Auth::login($user);
 
-
-
-    public function login(Request $request)
-    {
-        $details = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
-        ]);
-
-        if (Auth::attempt($details)) {
-            return redirect()->route('student.dashboard');
-        }
-
-        return back()->withErrors(['email' => 'Wrong Details']);
-    }
+    return redirect()->route('student.dashboard');
 }
 
 
+    public function showLoginForm()
+    {
+        return view('studentLogin');
+    }
+
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+
+            if ($user->role === 'student') {
+                return redirect()->route('student.dashboard');
+            } elseif ($user->role === 'staff') {
+                return redirect()->route('staff.dashboard');
+            } else {
+                Auth::logout();
+                return back()->withErrors(['email' => 'Invalid user role.']);
+            }
+        }
+
+        return back()->withErrors(['email' => 'Invalid credentials.']);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('login.form');
+    }
+}
